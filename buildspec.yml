@@ -14,7 +14,7 @@ phases:
       - echo Build started on `date`
       - echo Building the Docker image...     
       # Passing eviroment variables to image. Maybe it is not secure.     
-      - "docker build >--build-arg JP_DB_USERNAME=$JP_DB_USERNAME \
+      - "docker build --build-arg JP_DB_USERNAME=$JP_DB_USERNAME \
           --build-arg JP_DB_PASSWORD=$JP_DB_PASSWORD \
           --build-arg JP_DB_HOST=$JP_DB_HOST \
           --build-arg JP_DB_PORT=$JP_DB_PORT \
