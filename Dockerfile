@@ -1,8 +1,7 @@
 # Base image
 FROM joyzoursky/python-chromedriver:3.6-xvfb-selenium
 
-# Change timezone 
-RUN  timedatectl set-timezone Europe/Kiev
+
 # Installing dependencies
 RUN  pip install beautifulsoup4 psycopg2 python-telegram-bot 
 # Downloading linux Chrome Driver
@@ -13,10 +12,13 @@ WORKDIR  /usr/workspace
 ENV  JP_DB_USERNAME=$JP_DB_USERNAME JP_DB_PASSWORD=$JP_DB_PASSWORD JP_DB_HOST=$JP_DB_HOST JP_DB_PORT=$JP_DB_PORT JP_DB_DBNAME=$JP_DB_DBNAME
 # Telegram token connection environment var
 ENV TELEGRAM_TOKEN=$TELEGRAM_TOKEN
-LABEL project=job_parser
+# Set time
+ENV TZ Europe/Kiev
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 # EXPOSE 5432 5432
 COPY . . 
-CMD ["/usr/bin/python3", "./version2.py"] 
+CMD ["/usr/local/bin/python", "./version2.py"] 
 
 
 

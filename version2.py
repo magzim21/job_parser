@@ -1,6 +1,6 @@
 from selenium import webdriver
 import time,datetime, os, sys, logging, psycopg2.extras
-from config import host_features, browser_connection_settings, telegram_settings, db_connection_settings
+from config import host_features, browser_connection_settings, db_connection_settings
 # Do NOT delete this import.
 from resource_methods import bcolors, Work, Dou, Headh, Rabota
 from  inspect import currentframe
