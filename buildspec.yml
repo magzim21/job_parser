@@ -14,12 +14,12 @@ phases:
       - echo Build started on `date`
       - echo Building the Docker image...     
       # Passing eviroment variables to image. Maybe it is not secure.     
-      - docker build --build-arg JP_DB_USERNAME=$JP_DB_USERNAME \
---build-arg JP_DB_PASSWORD=$JP_DB_PASSWORD \
---build-arg JP_DB_HOST=$JP_DB_HOST \
---build-arg JP_DB_PORT=$JP_DB_PORT \
---build-arg JP_DB_DBNAME=$JP_DB_DBNAME \
---build-arg TELEGRAM_TOKEN=$TELEGRAM_TOKEN .
+      - "docker build >--build-arg JP_DB_USERNAME=$JP_DB_USERNAME \
+          --build-arg JP_DB_PASSWORD=$JP_DB_PASSWORD \
+          --build-arg JP_DB_HOST=$JP_DB_HOST \
+          --build-arg JP_DB_PORT=$JP_DB_PORT \
+          --build-arg JP_DB_DBNAME=$JP_DB_DBNAME \
+          --build-arg TELEGRAM_TOKEN=$TELEGRAM_TOKEN ."
       # - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
       # - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG      
   post_build:
