@@ -22,7 +22,7 @@ phases:
       # - echo Pushing the Docker image...
       # - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
 artifacts:
-  files:
-    - '**/*'
-  base-directory: location
-  name: myname-$(date +%Y-%m-%d) 
+  type: zip
+    files:
+      - build/**/*
+    discard-paths: no
