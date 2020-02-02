@@ -27,11 +27,7 @@ artifacts:
   discard-paths: yes
   # base-directory: './'
   secondary-artifacts:
-      artifact1:
-        files:
-          - '**/*'
-        discard-paths: yes
-      artifact2:
+      MyArtifactidentifier:
         files:
           - '**/*'
         discard-paths: yes
