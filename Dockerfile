@@ -16,7 +16,9 @@ ENV TELEGRAM_TOKEN=$TELEGRAM_TOKEN
 ENV TZ Europe/Kiev
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# EXPOSE 5432 5432
+# Just exposing any port (Elastic Beanstalk requirement)
+EXPOSE 1111 1111
+
 COPY . . 
 CMD ["/usr/local/bin/python", "./version2.py"] 
 
