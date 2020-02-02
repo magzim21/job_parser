@@ -24,5 +24,14 @@ phases:
 artifacts:
   files:
     - '**/*'
-  # discard-paths: yes
+  discard-paths: yes
   # base-directory: './'
+  secondary-artifacts:
+      artifact1:
+        files:
+          - '**/*'
+        discard-paths: yes
+      artifact2:
+        files:
+          - '**/*'
+        discard-paths: yes
