@@ -14,7 +14,8 @@ phases:
       - echo Build started on `date`
       - echo Building the Docker image...     
       # Passing eviroment variables to image. Maybe it is not secure.     
-      - "docker build --build-arg JP_DB_USERNAME=$JP_DB_USERNAME \
+      - "docker build -t jobparser \
+          --build-arg JP_DB_USERNAME=$JP_DB_USERNAME \
           --build-arg JP_DB_PASSWORD=$JP_DB_PASSWORD \
           --build-arg JP_DB_HOST=$JP_DB_HOST \
           --build-arg JP_DB_PORT=$JP_DB_PORT \
@@ -24,7 +25,12 @@ phases:
       # - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG      
   post_build:
     commands:
+      # todo made push to ECR
       - echo Build completed on `date`
+      - docker run jobparser
+      # change test time for more reliability. 
+      - sleep 30
+      - docker stop
       # - echo Pushing the Docker image...
       # - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
 artifacts:
