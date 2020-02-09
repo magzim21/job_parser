@@ -27,8 +27,8 @@ phases:
     commands:
       # todo made push to ECR
       - echo Build completed on `date`
-      - docker run jobparser
-      # change test time for more reliability. 
+      - docker run -d jobparser
+      # change test time for more reliability.
       - sleep 30
       - docker stop
       # - echo Pushing the Docker image...
