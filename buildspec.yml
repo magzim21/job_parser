@@ -27,11 +27,11 @@ phases:
     commands:
       # todo made push to ECR
       - echo Build completed on `date`
-      - docker run -d jobparser
+      - docker run -d --name cname jobparser
       # change test time for more reliability.
       - sleep 30
-      - docker logs $(docker ps -q)
-      - docker stop $(docker ps -q)
+      - docker logs cname
+      - docker stop cname
       # - echo Pushing the Docker image...
       # - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
 artifacts:
