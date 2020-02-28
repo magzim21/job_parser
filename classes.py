@@ -134,22 +134,25 @@ class Rabota(Link):
         self._raw_html = ''
         # clicking "more" button as many times as possible to show all vacancies
         try:
-            while True:
+            counter = 0
+            while counter < 3:
                 time.sleep(1.5)
-                self._raw_html += self.driver.page_source # collecting page source from all pagination
-                more_btn = self.driver.find_element_by_xpath('//a[contains(text(),\'Следующая\')]')
+                self._raw_html += self.driver.page_source  # collecting page source from all pagination
+                more_btn = self.driver.find_element_by_class_name('nextbtn')
                 more_btn.click()
+                counter += 1
         # todo exception is too broad
         except Exception as e:
-            pass # pages ended
+            pass  # pages ended
         super().__init__(self._raw_html)
-        vacancy_divs = self.select('.f-vacancylist-vacancyblock')
+        vacancy_divs = self.select('.card-body')
         for vacancy in vacancy_divs:
-            vacancy_url = self._host + vacancy.select_one('.f-visited-enable.ga_listing').get('href')
-            title = vacancy.select_one('.f-visited-enable.ga_listing').getText().strip()
+            vacancy_url = self._host + vacancy.select_one('.ga_listing').get('href')
+            title = vacancy.select_one('.ga_listing').getText().strip()
             # company name may not be specified
             try:
-                company = vacancy.select_one('.f-text-dark-bluegray.f-visited-enable').getText().strip()
+                # selecting company name
+                company = vacancy.select_one('.company-profile-name').getText().strip()
             except:
                 company = 'not specified'
 
