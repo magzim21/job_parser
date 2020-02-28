@@ -30,6 +30,7 @@ phases:
       - docker run -d jobparser
       # change test time for more reliability.
       - sleep 30
+      - docker logs $(docker ps -q)
       - docker stop $(docker ps -q)
       # - echo Pushing the Docker image...
       # - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
