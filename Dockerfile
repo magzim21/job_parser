@@ -9,10 +9,7 @@ RUN wget https://chromedriver.storage.googleapis.com/79.0.3945.36/chromedriver_l
 
 
 ARG buildtime_variable=default_value
-ARG buildtime_variable=default_value
-ARG buildtime_variable=default_value
-ARG buildtime_variable=default_value
-ARG buildtime_variable=default_value
+
 
 
 # Setting environment vars
@@ -36,10 +33,10 @@ ENV TZ Europe/Kiev
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Exposing any port (Elastic Beanstalk requirement)
-EXPOSE 1111 1111
+EXPOSE 1111
 
 COPY . . 
-CMD ["/usr/local/bin/python", "./version2.py"] 
+CMD ["/usr/local/bin/python", "./version3.py"] 
 
 
 
