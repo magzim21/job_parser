@@ -2,6 +2,7 @@ from selenium import webdriver
 import time,datetime, sys, logging, psycopg2.extras, telegram, os
 from config import host_features, browser_connection_settings, db_connection_settings
 from classes import bcolors,Link, User, Work, Dou, Headh, Rabota,Vacancy
+import gc
 
 # TODO Change color of evey message log level
 logging.basicConfig(stream=sys.stdout, level=logging.INFO, format='[%(asctime)s] p%(process)s %(pathname)s:%(lineno)d %(levelname)s - %(message)s')
@@ -51,11 +52,14 @@ except Exception as e:
 
 def main(interval):
     Link.driver = driver  # setting up a class property that gives chrome driver access to it's instances
-    cur.execute('SELECT "url" FROM "positions";')
-    Link.old_vacancies = set(i[0] for i in cur.fetchall()) # saving all previously found positions for comparing. Using set type for a faster search.
+    Link.logger = logger
+    # print(Link.old_vacancies)
     Vacancy.cursor = cur  # setting up a class property that gives database access to it's instances
     Vacancy.bot = telegram.Bot(token=os.environ['TELEGRAM_TOKEN'])  # setting up a class property that gives Telegram connection to it's instances
     while True:
+        cur.execute('SELECT "url" FROM "positions";')
+        Link.old_vacancies = set(i[0] for i in cur.fetchall()) # saving all previously found positions for comparing. Using set type for a faster search.
+        gc.collect()  # Trying to fix memory leaks if they took place
         # Creating users instances
         get_users_query = 'SELECT * FROM users;'
         cur.execute(get_users_query)
@@ -82,7 +86,7 @@ def main(interval):
                         checked += results[0]
                         inserted += results[1]
                         if results[1] and not user.is_new:
-                            logger.info('notification about {}'.format(vacancy.title))
+                            logger.info('notification about {}'.format(vacancy.title.encode('utf-8'))) # did it work ?
                             vacancy.send_notification(user.telegram_id)
                     connection.commit() # do i need this?
                 if user.is_new:

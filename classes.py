@@ -17,14 +17,50 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 
+class User:
+    def __init__(self, id: int, user_name: str, telegram_id: int, active: bool, is_new: bool) -> object:
+        self._id = id
+        self._user_name = user_name
+        self._telegram_id = telegram_id
+        self._active = active
+        self._is_new = is_new
+        self._links = []
+
+    @property
+    def id(self):
+        return self._id
+
+    @property
+    def user_name(self):
+        return self._user_name
+
+    @property
+    def telegram_id(self):
+        return self._telegram_id
+
+    @property
+    def active(self):
+        return self._active
+
+    @property
+    def is_new(self):
+        return self._is_new
+
+    @property
+    def links(self):
+        return self._links
+
+
 class Link(BeautifulSoup):
     _driver: type  # Chrome
     _old_vacancies: set # known vacancies
+    _logger: type # Logger
     def __init__(self, raw_html):
         if not hasattr(self, 'driver'):
             raise AttributeError('Chrome is not set')
         self._vacancies = []
         super().__init__(raw_html, "html.parser")
+
 
     @property
     def driver(self): # database cursor
@@ -33,7 +69,10 @@ class Link(BeautifulSoup):
     def driver(self, value):
         self._driver = value
     @property
-    def old_vacancies(self): # database cursor
+    def logger(self):
+        return self._logger
+    @property
+    def old_vacancies(self): # old vacancies fetched from a DataBase
         return self._old_vacancies
     @old_vacancies.setter
     def old_vacancies(self, value):
@@ -61,48 +100,20 @@ class Link(BeautifulSoup):
         return self._prev_links
 
 
-class User:
-    def __init__(self, id: int, user_name: str, telegram_id: int, active: bool, is_new: bool) -> object:
-        self._id = id
-        self._user_name = user_name
-        self._telegram_id = telegram_id
-        self._active = active
-        self._is_new = is_new
-        self._links = []
 
-    
-    
-    
-    @property
-    def id(self):
-        return self._id
-    @property
-    def user_name(self):
-        return self._user_name
-    @property
-    def telegram_id(self):
-        return self._telegram_id
-    @property
-    def active(self):
-        return self._active
-    @property
-    def is_new(self):
-        return self._is_new
-    @property
-    def links(self):
-        return self._links
-        
-        
-        
 
 
 class Dou(Link):
     def __init__(self, page_url, target, user_id):
-        self._host = 'jobs.dou.ua'
+        self._host = 'jobs.dou.ua' # I just hardcoded it. It was not necessary.
         self._url = page_url
         self._target = target
         self._user_id = user_id
-        self.driver.get(self._url)
+        try:
+            self.driver.get(self._url)
+        except Exception as e:
+            self.logger.error(f'ERROR - could not get to {self._url}')
+            return
         # clicking "more" button as many times as possible to chow all vacancies
         try:
             while True:
@@ -130,7 +141,11 @@ class Rabota(Link):
         self._url = page_url
         self._target = target
         self._user_id = user_id
-        self.driver.get(self._url)
+        try:
+            self.driver.get(self._url)
+        except Exception as e:
+            self.logger.error(f'ERROR - could not get to {self._url}')
+            return
         self._raw_html = ''
         # clicking "more" button as many times as possible to show all vacancies
         try:
@@ -165,7 +180,11 @@ class Headh(Link):
         self._url = page_url
         self._target = target
         self._user_id = user_id
-        self.driver.get(self._url)
+        try:
+            self.driver.get(self._url)
+        except Exception as e:
+            self.logger.error(f'ERROR - could not get to {self._url}')
+            return
         self._raw_html = ''
         # clicking "more" button as many times as possible to chow all vacancies
         try:
@@ -199,7 +218,11 @@ class Work(Link):
         self._url = page_url
         self._target = target
         self._user_id = user_id
-        self.driver.get(self._url)
+        try:
+            self.driver.get(self._url)
+        except Exception as e:
+            self.logger.error(f'ERROR - could not get to {self._url}')
+            return
         # clicking "more" button as many times as possible to chow all vacancies
         self._raw_html = ''
         try:
