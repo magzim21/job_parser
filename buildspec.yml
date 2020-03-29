@@ -55,7 +55,7 @@ artifacts:
   secondary-artifacts:
       MyArtifactidentifier:
         files:
-          - '/*'
+          - '*'
         # discard-paths: yes
   # these artifacts are not used anywhere
   bot-artifacts:
