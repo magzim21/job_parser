@@ -44,7 +44,8 @@ phases:
       - zip -r /function.zip *
 
       - echo Updating Lambda function   
-      - aws lambda update-function-code --function-name  my-telegram-bot-dev-hello   --zip-file  function.zip
+      - ls -alt
+      - aws lambda update-function-code --function-name  my-telegram-bot-dev-hello   --zip-file fileb://function.zip
 
 artifacts:
   files:
