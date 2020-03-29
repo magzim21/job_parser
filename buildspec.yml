@@ -41,7 +41,7 @@ phases:
 
       - cd ./my-telegram-bot
       - mv packages/* ./
-      - zip -r /function.zip *
+      - zip -r ./function.zip *
 
       - echo Updating Lambda function   
       - ls -alt
