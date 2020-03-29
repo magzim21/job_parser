@@ -42,9 +42,9 @@ phases:
       - cd ./my-telegram-bot
       - mv packages/* ./
       - zip -r /function.zip *
-      
+
       - echo Updating Lambda function   
-      - aws lambda update-function-code --function-name  my-telegram-bot-dev-hello   --zip-file fileb://function.zip
+      - aws lambda update-function-code --function-name  my-telegram-bot-dev-hello   --zip-file  function.zip
 
 artifacts:
   files:
