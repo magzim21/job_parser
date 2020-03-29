@@ -34,16 +34,33 @@ phases:
       - docker stop cname
       # - echo Pushing the Docker image...
       # - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
-      - echo Preparing archive for the Lambda function
-      - ./my-telegram-bot/fast.sh
-      - echo Lambda function updated
+      # - echo Preparing archive for the Lambda function
+      # - cd my-telegram-bot
+      # - zip -r9 ./function.zip ./handler.py
+      # - zip -ur ./function.zip ./images/*
+      # - cd ./packages
+      # - zip -ur ../function.zip *
+      # - cd ../
+
+      - cd ./my-telegram-bot
+      - mv packages/* ./
+
+      - echo Updating Lambda function 
+      - aws lambda update-function-code --function-name  my-telegram-bot-dev-hello   --zip-file fileb://function.zip
+
 artifacts:
   files:
     - '**/*'
-  discard-paths: yes
+  # discard-paths: yes
   # base-directory: './'
   secondary-artifacts:
       MyArtifactidentifier:
         files:
-          - '**/*'
-        discard-paths: yes
+          - '/*'
+        # discard-paths: yes
+  # these artifacts are not used anywhere
+  bot-artifacts:
+      MyArtifactidentifier:
+        files:
+          - 'my-telegram-bot/**/*'
+        # discard-paths: yes
