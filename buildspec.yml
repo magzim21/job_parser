@@ -28,12 +28,15 @@ phases:
       # todo made push to ECR
       - echo Build completed on `date`
       - docker run -d --name cname jobparser
-      # change test time for more reliability.
+      # increase test time for more reliability.
       - sleep 30
       - docker logs cname
       - docker stop cname
       # - echo Pushing the Docker image...
       # - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+      - echo Preparing archive for the Lambda function
+      - ./my-telegram-bot/fast.sh
+      - echo Lambda function updated
 artifacts:
   files:
     - '**/*'

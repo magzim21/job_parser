@@ -1,8 +1,8 @@
 import os
 browser_connection_settings ={
     'new_session': os.path.dirname(os.path.realpath(__file__)) + '/' + 'chromedriver',
-    'existing_session':{'url' :'http://127.0.0.1:58009',
-    'session_id' : 'd28a31196e5f99b0453a8af7e45beb0b'}
+    # 'existing_session':{'url' :'http://127.0.0.1:58009',
+    # 'session_id' : 'd28a31196e5f99b0453a8af7e45beb0b'}
 }
 
 db_connection_settings = {'user': os.environ['JP_DB_USERNAME'],

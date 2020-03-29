@@ -5,10 +5,16 @@ from classes import bcolors,Link, User, Work, Dou, Headh, Rabota,Vacancy
 import gc
 
 # TODO Change color of evey message log level
-logging.basicConfig(stream=sys.stdout, level=logging.INFO, format='[%(asctime)s] p%(process)s %(pathname)s:%(lineno)d %(levelname)s - %(message)s')
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, format='[%(asctime)s] p%(process)s %(pathname)s:%(lineno)d %(levelname)s - %(message)s')
 logger = logging.getLogger(' Job Parser')
 
-# TODO  main
+# def notify_my_TG(func):
+#     def inner(message):
+#         BOT = telegram.Bot(token=os.environ['DEBUG_TELEGRAM_TOKEN'])
+#         func(message)
+#         BOT.send_message(message)
+#     return inner
+
 
 # DB connection
 try:
@@ -16,7 +22,7 @@ try:
     cur = connection.cursor(cursor_factory = psycopg2.extras.DictCursor)
     logger.info(bcolors.OKGREEN+"DB CONNECTED"+ bcolors.ENDC)
 except (Exception, psycopg2.Error) as error:
-    logger.info(bcolors.FAIL+"Error while connecting to PostgreSQL" + bcolors.ENDC +"\n"+ str(error))
+    logger.error(bcolors.FAIL+"Error while connecting to PostgreSQL" + bcolors.ENDC +"\n"+ str(error))
     exit()
 
 # according to module features, better to initialize browser outside functions.
@@ -25,7 +31,7 @@ except (Exception, psycopg2.Error) as error:
 
 
 try:
-    logger.info("Trying to start new session")
+    logger.debug("Trying to start new session")
     # todo make Chrome dynamic by get getattr
     chrome_options = webdriver.ChromeOptions()
     # This lines are makes chrome able to run as a service (also in a Docker file)
@@ -35,19 +41,19 @@ try:
     chrome_options.add_argument('--disable-gpu')
     driver = webdriver.Chrome(executable_path=browser_connection_settings['new_session'], options=chrome_options)
     driver.set_page_load_timeout(5) # this will stop page ever loading
-    logger.info(bcolors.OKGREEN+"New Chrome session started" + bcolors.ENDC)
+    logger.debug(bcolors.OKGREEN+"New Chrome session started" + bcolors.ENDC)
     url = driver.command_executor._url
     session_id = driver.session_id
-    update_config_query = 'UPDATE configs SET value = %(url)s WHERE param = \'url\';' \
-                          'UPDATE configs SET value = %(session_id)s WHERE param = \'session_id\';'
-    substitution = {"url" : url,"session_id":  session_id}
-    cur.execute(update_config_query,substitution)
+    # update_config_query = 'UPDATE configs SET value = %(url)s WHERE param = \'url\';' \
+    #                       'UPDATE configs SET value = %(session_id)s WHERE param = \'session_id\';'
+    # substitution = {"url" : url,"session_id":  session_id}
+    # cur.execute(update_config_query,substitution)
     connection.commit()
     #todo auto-update current session
-    logger.info(bcolors.OKGREEN + 'Web driver info:\nurl(port): {} , session_id: {}'.format(driver.command_executor._url, driver.session_id) + bcolors.ENDC)
+    logger.debug(bcolors.OKGREEN + 'Web driver.debug:\nurl(port): {} , session_id: {}'.format(driver.command_executor._url, driver.session_id) + bcolors.ENDC)
 except Exception as e:
-    logger.info(e)
-    logger.info(bcolors.FAIL + "Chrome driver failed to start" + bcolors.ENDC)
+    logger.error(e)
+    logger.error(bcolors.FAIL + "Chrome driver failed to start" + bcolors.ENDC)
     exit(1)
 
 def main(interval):
@@ -70,34 +76,30 @@ def main(interval):
 
         for user in users:
             if user.active:
-                just_counter, checked, inserted = 0, 0, 0 # counters
+                checked, inserted = 0, 0 # counters
                 get_urls_query = 'SELECT * FROM urls WHERE user_id = {};'.format(user.id)
                 cur.execute(get_urls_query)
                 urls_rows = cur.fetchall()
                 for row in urls_rows:
-                    # logger.info(bcolors.OKBLUE + "Current resource parsing: " + str([link.host][0]) + bcolors.ENDC)
+                    # logger.debug(bcolors.OKBLUE + "Current resource parsing: " + str([link.host][0]) + bcolors.ENDC)
                     link = globals()[host_features[row['host']]['class']](row['url'], row['target'], user.id)
                     user.links.append(link)
-                    logger.info("{} vacancies found on '{}' regarding '{}'.".format(str(len(link.vacancies)), link.host, link.target))
+                    logger.debug("{} vacancies found on '{}' regarding '{}'.".format(str(len(link.vacancies)), link.host, link.target))
                 for link in user.links:
                     for vacancy in link.vacancies:
                         results = vacancy.insert_to_db()
-                        just_counter +=1
                         checked += results[0]
                         inserted += results[1]
                         if results[1] and not user.is_new:
-                            logger.info('notification about {}'.format(vacancy.title.encode('utf-8'))) # did it work ?
                             vacancy.send_notification(user.telegram_id)
+                            logger.debug(f'{user.user_name} was notified about {vacancy.title.encode("utf-8")}')
                     connection.commit() # do i need this?
                 if user.is_new:
                     set_not_new = 'UPDATE "users" SET "is_new" = false WHERE "user_id" = {};'.format(user.id)
                     cur.execute(set_not_new)
                     connection.commit()
-                logger.info(datetime.datetime.now())
-
-                logger.info("User {} ; checked: {} , inserted: {}.".format(user.user_name, checked, inserted))
-                logger.info(str(just_counter))
-        logger.info(bcolors.UNDERLINE +'waiting...' + bcolors.ENDC)
+                logger.debug("User {} ; checked: {} , inserted: {}.".format(user.user_name, checked, inserted))
+        logger.debug(bcolors.UNDERLINE +'waiting...' + bcolors.ENDC)
         time.sleep(60*15)
     # cur.close()
     # connection.close()

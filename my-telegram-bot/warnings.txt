@@ -1,0 +1,3 @@
+WARNING: Target directory /Users/magzim/Desktop/telegramBot/hackernoon/my-telegram-bot/packages/certifi already exists. Specify --upgrade to force replacement.
+WARNING: Target directory /Users/magzim/Desktop/telegramBot/hackernoon/my-telegram-bot/packages/certifi-2019.11.28.dist-info already exists. Specify --upgrade to force replacement.
+WARNING: Target directory /Users/magzim/Desktop/telegramBot/hackernoon/my-telegram-bot/packages/bin already exists. Specify --upgrade to force replacement.

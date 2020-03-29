@@ -1,0 +1,1 @@
+Use lambda adopted psycopg code https://github.com/jkehler/awslambda-psycopg2

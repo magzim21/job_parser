@@ -36,6 +36,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 EXPOSE 1111
 
 COPY . . 
+# TODO change CMD to entrypoint
 CMD ["/usr/local/bin/python", "./version3.py"] 
 
 
