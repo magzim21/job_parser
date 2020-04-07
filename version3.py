@@ -44,11 +44,6 @@ try:
     logger.debug(bcolors.OKGREEN+"New Chrome session started" + bcolors.ENDC)
     url = driver.command_executor._url
     session_id = driver.session_id
-    # update_config_query = 'UPDATE configs SET value = %(url)s WHERE param = \'url\';' \
-    #                       'UPDATE configs SET value = %(session_id)s WHERE param = \'session_id\';'
-    # substitution = {"url" : url,"session_id":  session_id}
-    # cur.execute(update_config_query,substitution)
-    connection.commit()
     #todo auto-update current session
     logger.debug(bcolors.OKGREEN + 'Web driver.debug:\nurl(port): {} , session_id: {}'.format(driver.command_executor._url, driver.session_id) + bcolors.ENDC)
 except Exception as e:
@@ -72,7 +67,7 @@ def main(interval):
         users_rows = cur.fetchall()
         users = []
         for user in users_rows:
-            users.append(User(user['user_id'], user['user_name'],user['telegram_id'],user['active'],user['is_new']))
+            users.append(User(user['user_id'], user['user_name'],user['telegram_id'],user['active']))
 
         for user in users:
             if user.active:
@@ -82,7 +77,7 @@ def main(interval):
                 urls_rows = cur.fetchall()
                 for row in urls_rows:
                     # logger.debug(bcolors.OKBLUE + "Current resource parsing: " + str([link.host][0]) + bcolors.ENDC)
-                    link = globals()[host_features[row['host']]['class']](row['url'], row['target'], user.id)
+                    link = globals()[host_features[row['host']]['class']](row['url'], row['target'], user.id, row['is_new'] )
                     user.links.append(link)
                     logger.debug("{} vacancies found on '{}' regarding '{}'.".format(str(len(link.vacancies)), link.host, link.target))
                 for link in user.links:
@@ -93,10 +88,15 @@ def main(interval):
                         if results[1] and not user.is_new:
                             vacancy.send_notification(user.telegram_id)
                             logger.debug(f'{user.user_name} was notified about {vacancy.title.encode("utf-8")}')
-                    connection.commit() # do i need this?
-                if user.is_new:
-                    set_not_new = 'UPDATE "users" SET "is_new" = false WHERE "user_id" = {};'.format(user.id)
-                    cur.execute(set_not_new)
+                    # setting link as not new
+                    if link.is_new:
+                        set_not_new = 'UPDATE "urls" SET "is_new" = false WHERE "url" = \'{}\';'.format(link.url)
+                        cur.execute(set_not_new)
+                        connection.commit()
+                    # connection.commit() # do i need this?
+                # if user.is_new:
+                #     set_not_new = 'UPDATE "users" SET "is_new" = false WHERE "user_id" = {};'.format(user.id)
+                #     cur.execute(set_not_new)
                     connection.commit()
                 logger.debug("User {} ; checked: {} , inserted: {}.".format(user.user_name, checked, inserted))
         logger.debug(bcolors.UNDERLINE +'waiting...' + bcolors.ENDC)

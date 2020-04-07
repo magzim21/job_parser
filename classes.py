@@ -18,12 +18,11 @@ class bcolors:
 
 
 class User:
-    def __init__(self, id: int, user_name: str, telegram_id: int, active: bool, is_new: bool) -> object:
+    def __init__(self, id: int, user_name: str, telegram_id: int, active: bool) -> object:
         self._id = id
         self._user_name = user_name
         self._telegram_id = telegram_id
         self._active = active
-        self._is_new = is_new
         self._links = []
 
     @property
@@ -42,9 +41,7 @@ class User:
     def active(self):
         return self._active
 
-    @property
-    def is_new(self):
-        return self._is_new
+
 
     @property
     def links(self):
@@ -98,17 +95,21 @@ class Link(BeautifulSoup):
     @property
     def prev_links(self): # all vacancy links found for this user
         return self._prev_links
+    @property
+    def is_new(self): # all vacancy links found for this user
+        return self._is_new
 
 
 
 
 
 class Dou(Link):
-    def __init__(self, page_url, target, user_id):
+    def __init__(self, page_url, target, user_id, is_new):
         self._host = 'jobs.dou.ua' # I just hardcoded it. It was not necessary.
         self._url = page_url
         self._target = target
         self._user_id = user_id
+        self._is_new = is_new
         try:
             self.driver.get(self._url)
         except Exception as e:
@@ -136,11 +137,12 @@ class Dou(Link):
 
 
 class Rabota(Link):
-    def __init__(self, page_url, target, user_id):
+    def __init__(self, page_url, target, user_id, is_new):
         self._host = 'rabota.ua'
         self._url = page_url
         self._target = target
         self._user_id = user_id
+        self._is_new = is_new
         try:
             self.driver.get(self._url)
         except Exception as e:
@@ -175,11 +177,12 @@ class Rabota(Link):
 
 
 class Headh(Link):
-    def __init__(self, page_url, target, user_id):
+    def __init__(self, page_url, target, user_id, is_new):
         self._host = 'hh.ua'
         self._url = page_url
         self._target = target
         self._user_id = user_id
+        self._is_new = is_new
         try:
             self.driver.get(self._url)
         except Exception as e:
@@ -213,11 +216,12 @@ class Headh(Link):
 
 
 class Work(Link):
-    def __init__(self, page_url, target, user_id):
+    def __init__(self, page_url, target, user_id, is_new):
         self._host = 'work.ua'
         self._url = page_url
         self._target = target
         self._user_id = user_id
+        self._is_new = is_new
         try:
             self.driver.get(self._url)
         except Exception as e:
